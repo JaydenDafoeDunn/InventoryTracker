@@ -4,9 +4,17 @@ let inventory = [];
  * Load inventory from JSON file
  */
 async function loadInventoryFromJSON() {
-  const response = await fetch("inventory.json");
-  const data = await response.json();
-  inventory = data;
+  try {
+    const response = await fetch("inventory.json");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    inventory = data;
+  } catch (error) {
+    console.error("Error loading inventory:", error);
+    throw error;
+  }
 }
 
 /**
@@ -187,16 +195,27 @@ function checkInItems() {
   const items = selectedItemsList.querySelectorAll("li");
   if (items.length === 0) return alert("Please add at least one item.");
 
+  let errorMessages = [];
+
   items.forEach((item) => {
     const itemName = item.dataset.itemName;
     const inventoryItem = inventory.find((i) => i.name === itemName);
-    if (inventoryItem && inventoryItem.status === "checked-out") {
-      inventoryItem.status = "available";
-      logInventoryChange("Checked In", itemName, userName, projectNumber);
+    if (inventoryItem) {
+      if (inventoryItem.status === "checked-out") {
+        inventoryItem.status = "available";
+        logInventoryChange("Checked In", itemName, userName, projectNumber);
+      } else {
+        errorMessages.push(`"${itemName}" is already checked in.`);
+      }
     }
   });
 
-  alert("Selected items have been checked in.");
+  if (errorMessages.length > 0) {
+    alert(errorMessages.join("\n"));
+  } else {
+    alert("Selected items have been checked in.");
+  }
+
   updateTable();
   selectedItemsList.innerHTML = "";
 }
@@ -210,16 +229,27 @@ function checkOutItems() {
   const items = selectedItemsList.querySelectorAll("li");
   if (items.length === 0) return alert("Please add at least one item.");
 
+  let errorMessages = [];
+
   items.forEach((item) => {
     const itemName = item.dataset.itemName;
     const inventoryItem = inventory.find((i) => i.name === itemName);
-    if (inventoryItem && inventoryItem.status === "available") {
-      inventoryItem.status = "checked-out";
-      logInventoryChange("Checked Out", itemName, userName, projectNumber);
+    if (inventoryItem) {
+      if (inventoryItem.status === "available") {
+        inventoryItem.status = "checked-out";
+        logInventoryChange("Checked Out", itemName, userName, projectNumber);
+      } else {
+        errorMessages.push(`"${itemName}" is already checked out.`);
+      }
     }
   });
 
-  alert("Selected items have been checked out.");
+  if (errorMessages.length > 0) {
+    alert(errorMessages.join("\n"));
+  } else {
+    alert("Selected items have been checked out.");
+  }
+
   updateTable();
   selectedItemsList.innerHTML = "";
 }
