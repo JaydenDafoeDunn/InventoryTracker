@@ -1,71 +1,75 @@
-// The 'inventory' array will be loaded from "inventory.json".
 let inventory = [];
 
-// An array to store log entries, if you want to track changes:
-let inventoryLog = [];
-
-// When the DOM loads, fetch the JSON first, then initialize the rest
-document.addEventListener("DOMContentLoaded", () => {
-  loadInventoryFromJSON()
-    .then(() => {
-      // Now that 'inventory' is loaded, set up everything else:
-      setupTabs();
-      setupForms();
-      // Initial UI updates
-      updateTable();
-      updateDropdowns();
-      // Show the "Check In/Out" tab by default (or "inventory" if you prefer)
-      showTab("checkio");
-    })
-    .catch((error) => {
-      console.error("Error loading inventory:", error);
-      // We can still continue with an empty 'inventory' if needed
-      setupTabs();
-      setupForms();
-    });
-});
-
 /**
- * Fetch the inventory data from "inventory.json" and store it in the 'inventory' array.
+ * Load inventory from JSON file
  */
-function loadInventoryFromJSON() {
-  return fetch("inventory.json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      // 'data' should be an array of { name, status }
-      inventory = data;
-    });
+async function loadInventoryFromJSON() {
+  const response = await fetch("inventory.json");
+  const data = await response.json();
+  inventory = data;
 }
 
 /**
- * Setup event listeners for the nav tabs: Inventory, Admin, Check In/Out.
+ * Log inventory changes
  */
-function setupTabs() {
-  const tabInventory = document.getElementById("show-inventory");
-  const tabAdmin = document.getElementById("show-admin");
-  const tabCheckIO = document.getElementById("show-checkio");
+function logInventoryChange(action, itemName, userName = "", projectNumber = "") {
+  const logEntry = document.createElement("li");
+  logEntry.textContent = `${new Date().toLocaleString()}: ${action} - ${itemName} by ${userName} for project ${projectNumber}`;
+  const inventoryLog = document.getElementById("inventory-log");
+  if (inventoryLog) {
+    inventoryLog.appendChild(logEntry);
+  }
+}
 
-  if (tabInventory) {
-    tabInventory.addEventListener("click", (e) => {
-      e.preventDefault();
-      showTab("inventory");
+/**
+ * Update the inventory table
+ */
+function updateTable() {
+  const tableBody = document.getElementById("inventory-table-body");
+  if (!tableBody) return;
+
+  tableBody.innerHTML = ""; // Clear out old rows
+
+  inventory.forEach((item) => {
+    const row = document.createElement("tr");
+
+    const nameCell = document.createElement("td");
+    nameCell.textContent = item.name;
+
+    const statusCell = document.createElement("td");
+    statusCell.textContent = item.status;
+
+    row.appendChild(nameCell);
+    row.appendChild(statusCell);
+    tableBody.appendChild(row);
+  });
+}
+
+/**
+ * Populate dropdowns with the current inventory
+ */
+function updateDropdowns() {
+  const checkioDropdown = document.getElementById("checkio-item-name");
+  if (checkioDropdown) {
+    checkioDropdown.innerHTML = "";
+
+    inventory.forEach((item) => {
+      const option = document.createElement("option");
+      option.value = item.name;
+      option.textContent = item.name;
+      checkioDropdown.appendChild(option);
     });
   }
-  if (tabAdmin) {
-    tabAdmin.addEventListener("click", (e) => {
-      e.preventDefault();
-      showTab("admin");
-    });
-  }
-  if (tabCheckIO) {
-    tabCheckIO.addEventListener("click", (e) => {
-      e.preventDefault();
-      showTab("checkio");
+
+  const removeDropdown = document.getElementById("remove-item-name");
+  if (removeDropdown) {
+    removeDropdown.innerHTML = "";
+
+    inventory.forEach((item) => {
+      const option = document.createElement("option");
+      option.value = item.name;
+      option.textContent = item.name;
+      removeDropdown.appendChild(option);
     });
   }
 }
@@ -77,30 +81,20 @@ function setupTabs() {
  *  - Check In/Out
  */
 function setupForms() {
-  // Add Item form
   const addItemForm = document.getElementById("add-item-form");
   if (addItemForm) {
     addItemForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const newItemName = document
-        .getElementById("new-item-name")
-        .value.trim();
-
+      const newItemName = document.getElementById("new-item-name").value.trim();
       if (newItemName) {
-        // Check if item already exists
-        const existing = inventory.find(
-          (i) => i.name.toLowerCase() === newItemName.toLowerCase()
-        );
+        const existing = inventory.find((i) => i.name.toLowerCase() === newItemName.toLowerCase());
         if (existing) {
           alert("Item already exists.");
         } else {
-          // Add new item
           inventory.push({ name: newItemName, status: "available" });
           logInventoryChange("Added", newItemName);
           alert(`"${newItemName}" added!`);
-          // Clear input
           document.getElementById("new-item-name").value = "";
-          // Update UI
           updateTable();
           updateDropdowns();
         }
@@ -108,14 +102,12 @@ function setupForms() {
     });
   }
 
-  // Remove Item form
   const removeItemForm = document.getElementById("remove-item-form");
   if (removeItemForm) {
     removeItemForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const removeName = document.getElementById("remove-item-name").value;
       if (!removeName) return;
-
       const index = inventory.findIndex((i) => i.name === removeName);
       if (index === -1) {
         alert("Item not found.");
@@ -129,16 +121,107 @@ function setupForms() {
     });
   }
 
-  // Check In/Out buttons
+  const btnAddItem = document.getElementById("btn-add-item");
+  if (btnAddItem) {
+    btnAddItem.addEventListener("click", addItemToList);
+  }
+
+  const btnRemoveAll = document.getElementById("btn-remove-all");
+  if (btnRemoveAll) {
+    btnRemoveAll.addEventListener("click", removeAllItems);
+  }
+
   const btnCheckIn = document.getElementById("btn-checkin");
   const btnCheckOut = document.getElementById("btn-checkout");
 
   if (btnCheckIn) {
-    btnCheckIn.addEventListener("click", checkInItem);
+    btnCheckIn.addEventListener("click", checkInItems);
   }
   if (btnCheckOut) {
-    btnCheckOut.addEventListener("click", checkOutItem);
+    btnCheckOut.addEventListener("click", checkOutItems);
   }
+}
+
+function addItemToList() {
+  const select = document.getElementById("checkio-item-name");
+  const selectedItemsList = document.getElementById("selected-items-list");
+  const selectedItemsLabel = document.getElementById("selected-items-label");
+  const btnRemoveAll = document.getElementById("btn-remove-all");
+  if (!select || !selectedItemsList) return;
+
+  const itemName = select.value;
+  if (!itemName) return alert("Please select an item.");
+
+  const listItem = document.createElement("li");
+  listItem.textContent = itemName;
+  listItem.dataset.itemName = itemName;
+
+  selectedItemsList.appendChild(listItem);
+
+  // Show the selected items label and remove all button
+  selectedItemsLabel.classList.remove("hidden");
+  selectedItemsList.classList.remove("hidden");
+  btnRemoveAll.classList.remove("hidden");
+}
+
+function removeAllItems() {
+  const selectedItemsList = document.getElementById("selected-items-list");
+  const selectedItemsLabel = document.getElementById("selected-items-label");
+  const btnRemoveAll = document.getElementById("btn-remove-all");
+  if (selectedItemsList) {
+    selectedItemsList.innerHTML = "";
+
+    // Hide the selected items label and remove all button
+    selectedItemsLabel.classList.add("hidden");
+    selectedItemsList.classList.add("hidden");
+    btnRemoveAll.classList.add("hidden");
+  }
+}
+
+function checkInItems() {
+  const selectedItemsList = document.getElementById("selected-items-list");
+  const userName = document.getElementById('checkio-user-name').value;
+  const projectNumber = document.getElementById('checkio-project-number').value;
+  if (!selectedItemsList) return;
+
+  const items = selectedItemsList.querySelectorAll("li");
+  if (items.length === 0) return alert("Please add at least one item.");
+
+  items.forEach((item) => {
+    const itemName = item.dataset.itemName;
+    const inventoryItem = inventory.find((i) => i.name === itemName);
+    if (inventoryItem && inventoryItem.status === "checked-out") {
+      inventoryItem.status = "available";
+      logInventoryChange("Checked In", itemName, userName, projectNumber);
+    }
+  });
+
+  alert("Selected items have been checked in.");
+  updateTable();
+  selectedItemsList.innerHTML = "";
+}
+
+function checkOutItems() {
+  const selectedItemsList = document.getElementById("selected-items-list");
+  const userName = document.getElementById('checkio-user-name').value;
+  const projectNumber = document.getElementById('checkio-project-number').value;
+  if (!selectedItemsList) return;
+
+  const items = selectedItemsList.querySelectorAll("li");
+  if (items.length === 0) return alert("Please add at least one item.");
+
+  items.forEach((item) => {
+    const itemName = item.dataset.itemName;
+    const inventoryItem = inventory.find((i) => i.name === itemName);
+    if (inventoryItem && inventoryItem.status === "available") {
+      inventoryItem.status = "checked-out";
+      logInventoryChange("Checked Out", itemName, userName, projectNumber);
+    }
+  });
+
+  alert("Selected items have been checked out.");
+  updateTable();
+  selectedItemsList.innerHTML = "";
 }
 
 /**
@@ -164,7 +247,7 @@ function showTab(tabName) {
   if (tabAdmin) tabAdmin.classList.remove("active");
   if (tabCheckIO) tabCheckIO.classList.remove("active");
 
-  // Show the chosen section and highlight its nav link
+  // Show the selected section and set the active state on the corresponding nav link
   switch (tabName) {
     case "inventory":
       if (inventorySection) inventorySection.classList.remove("hidden");
@@ -181,132 +264,34 @@ function showTab(tabName) {
   }
 }
 
-/**
- * Update the table (#inventory-table) with the current items in `inventory`.
- */
-function updateTable() {
-  const tableBody = document.getElementById("inventory-table");
-  if (!tableBody) return;
-
-  tableBody.innerHTML = ""; // Clear out old rows
-
-  inventory.forEach((item) => {
-    const row = document.createElement("tr");
-
-    const tdName = document.createElement("td");
-    tdName.textContent = item.name;
-
-    const tdStatus = document.createElement("td");
-    tdStatus.textContent =
-      item.status === "available" ? "Checked In" : "Checked Out";
-
-    row.appendChild(tdName);
-    row.appendChild(tdStatus);
-    tableBody.appendChild(row);
-  });
-}
-
-/**
- * Populate dropdowns (remove-item-name, checkio-item-name) with the current inventory
- */
-function updateDropdowns() {
-  // Remove item dropdown
-  const removeSelect = document.getElementById("remove-item-name");
-  if (removeSelect) {
-    removeSelect.innerHTML = "";
-    // Optional default option
-    const placeholder = document.createElement("option");
-    placeholder.value = "";
-    placeholder.textContent = "Select an item";
-    removeSelect.appendChild(placeholder);
-
-    inventory.forEach((item) => {
-      const opt = document.createElement("option");
-      opt.value = item.name;
-      opt.textContent = item.name;
-      removeSelect.appendChild(opt);
+document.addEventListener("DOMContentLoaded", () => {
+  loadInventoryFromJSON()
+    .then(() => {
+      setupTabs();
+      setupForms();
+      updateTable();
+      updateDropdowns();
+      showTab("checkio");
+    })
+    .catch((error) => {
+      console.error("Error loading inventory:", error);
+      setupTabs();
+      setupForms();
     });
+});
+
+function setupTabs() {
+  const tabInventory = document.getElementById("show-inventory");
+  const tabAdmin = document.getElementById("show-admin");
+  const tabCheckIO = document.getElementById("show-checkio");
+
+  if (tabInventory) {
+    tabInventory.addEventListener("click", () => showTab("inventory"));
   }
-
-  // Check In/Out dropdown
-  const checkioSelect = document.getElementById("checkio-item-name");
-  if (checkioSelect) {
-    checkioSelect.innerHTML = "";
-    // Optional default option
-    const placeholder2 = document.createElement("option");
-    placeholder2.value = "";
-    placeholder2.textContent = "Select an item";
-    checkioSelect.appendChild(placeholder2);
-
-    inventory.forEach((item) => {
-      const opt2 = document.createElement("option");
-      opt2.value = item.name;
-      opt2.textContent = item.name;
-      checkioSelect.appendChild(opt2);
-    });
+  if (tabAdmin) {
+    tabAdmin.addEventListener("click", () => showTab("admin"));
   }
-}
-
-/**
- * Check In handler
- */
-function checkInItem() {
-  const select = document.getElementById("checkio-item-name");
-  const userName = document.getElementById('checkio-user-name').value;
-  const projectNumber = document.getElementById('checkio-project-number').value;
-  if (!select) return;
-
-  const itemName = select.value;
-  if (!itemName) return alert("Please select an item.");
-
-  const item = inventory.find((i) => i.name === itemName);
-  if (!item) return alert("Item not found in inventory.");
-
-  if (item.status === "checked-out") {
-    item.status = "available";
-    logInventoryChange("Checked In", item.name, userName, projectNumber);
-    alert(`"${item.name}" has been checked in.`);
-    updateTable();
-  } else {
-    alert(`"${item.name}" is already checked in.`);
+  if (tabCheckIO) {
+    tabCheckIO.addEventListener("click", () => showTab("checkio"));
   }
-}
-
-/**
- * Check Out handler
- */
-function checkOutItem() {
-  const select = document.getElementById("checkio-item-name");
-  const userName = document.getElementById('checkio-user-name').value;
-  const projectNumber = document.getElementById('checkio-project-number').value;
-  if (!select) return;
-
-  const itemName = select.value;
-  if (!itemName) return alert("Please select an item.");
-
-  const item = inventory.find((i) => i.name === itemName);
-  if (!item) return alert("Item not found in inventory.");
-
-  if (item.status === "available") {
-    item.status = "checked-out";
-    logInventoryChange("Checked Out", item.name, userName, projectNumber);
-    alert(`"${item.name}" has been checked out.`);
-    updateTable();
-  } else {
-    alert(`"${item.name}" is already checked out.`);
-  }
-}
-
-/**
- * Log an action (e.g., "Added", "Removed", "Checked In", "Checked Out")
- */
-function logInventoryChange(action, itemName, userName, projectNumber) {
-  inventoryLog.push({ action, itemName, userName, projectNumber, timestamp: new Date().toLocaleString() });
-
-  const logUl = document.getElementById("inventory-log");
-  if (!logUl) return;
-
-  const li = document.createElement("li");
-  li.textContent = `[${new Date().toLocaleTimeString()}] ${action}: ${itemName} by ${userName} for project ${projectNumber}`;
-  logUl.appendChild(li);
 }
