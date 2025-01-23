@@ -1,30 +1,31 @@
-// Sample inventory data
+// Inventory data
 const inventory = [
   { name: "Laptop", status: "available" },
   { name: "Projector", status: "available" },
   { name: "HDMI Cable", status: "available" },
 ];
 
-// Switch between tabs
+// Tab switching logic
 document.getElementById("tracker-tab").addEventListener("click", (e) => {
   e.preventDefault(); // Prevent default anchor behavior
-  showSection("tracker-section", "tracker-tab");
+  switchTab("tracker-section", "tracker-tab");
 });
 
 document.getElementById("admin-tab").addEventListener("click", (e) => {
   e.preventDefault(); // Prevent default anchor behavior
-  showSection("admin-section", "admin-tab");
+  switchTab("admin-section", "admin-tab");
 });
 
-// Function to show the appropriate section and highlight the active tab
-function showSection(sectionId, tabId) {
+function switchTab(sectionId, tabId) {
   // Hide all sections
-  document.getElementById("tracker-section").classList.add("hidden");
-  document.getElementById("admin-section").classList.add("hidden");
+  document.querySelectorAll(".container > div").forEach((section) => {
+    section.classList.add("hidden");
+  });
 
   // Remove 'active' class from all tabs
-  document.getElementById("tracker-tab").classList.remove("active");
-  document.getElementById("admin-tab").classList.remove("active");
+  document.querySelectorAll("nav a").forEach((tab) => {
+    tab.classList.remove("active");
+  });
 
   // Show the selected section
   document.getElementById(sectionId).classList.remove("hidden");
@@ -33,16 +34,9 @@ function showSection(sectionId, tabId) {
   document.getElementById(tabId).classList.add("active");
 }
 
-// Populate the dropdown and table on page load
-document.addEventListener("DOMContentLoaded", () => {
-  updateDropdown();
-  updateTable();
-});
-
-// Handle inventory form submission
+// Inventory form logic
 document.getElementById("inventory-form").addEventListener("submit", (e) => {
   e.preventDefault();
-
   const itemName = document.getElementById("item-name").value;
   const action = document.getElementById("action").value;
 
@@ -53,22 +47,20 @@ document.getElementById("inventory-form").addEventListener("submit", (e) => {
     } else if (action === "check-in" && item.status === "checked-out") {
       item.status = "available";
     } else {
-      alert(`Item is already ${item.status.replace("-", " ")}!`);
+      alert(`Item is already ${item.status.replace("-", " ")}.`);
       return;
     }
   }
-
   updateTable();
 });
 
-// Handle admin form submission
+// Admin form logic
 document.getElementById("admin-form").addEventListener("submit", (e) => {
   e.preventDefault();
-
   const newItemName = document.getElementById("new-item-name").value.trim();
   if (newItemName && !inventory.some((i) => i.name === newItemName)) {
     inventory.push({ name: newItemName, status: "available" });
-    alert(`Item "${newItemName}" added successfully!`);
+    alert(`Item "${newItemName}" added successfully.`);
     document.getElementById("new-item-name").value = "";
     updateDropdown();
     updateTable();
@@ -77,7 +69,12 @@ document.getElementById("admin-form").addEventListener("submit", (e) => {
   }
 });
 
-// Update the dropdown dynamically
+// Populate dropdown and table
+document.addEventListener("DOMContentLoaded", () => {
+  updateDropdown();
+  updateTable();
+});
+
 function updateDropdown() {
   const itemNameDropdown = document.getElementById("item-name");
   itemNameDropdown.innerHTML = "";
@@ -89,7 +86,6 @@ function updateDropdown() {
   });
 }
 
-// Update the table dynamically
 function updateTable() {
   const inventoryTable = document.getElementById("inventory-table");
   inventoryTable.innerHTML = "";
