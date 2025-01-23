@@ -6,19 +6,32 @@ const inventory = [
 ];
 
 // Switch between tabs
-document.getElementById("tracker-tab").addEventListener("click", () => {
-  document.getElementById("tracker-section").classList.remove("hidden");
-  document.getElementById("admin-section").classList.add("hidden");
-  document.getElementById("tracker-tab").classList.add("active");
-  document.getElementById("admin-tab").classList.remove("active");
+document.getElementById("tracker-tab").addEventListener("click", (e) => {
+  e.preventDefault(); // Prevent default anchor behavior
+  showSection("tracker-section", "tracker-tab");
 });
 
-document.getElementById("admin-tab").addEventListener("click", () => {
-  document.getElementById("admin-section").classList.remove("hidden");
-  document.getElementById("tracker-section").classList.add("hidden");
-  document.getElementById("admin-tab").classList.add("active");
-  document.getElementById("tracker-tab").classList.remove("active");
+document.getElementById("admin-tab").addEventListener("click", (e) => {
+  e.preventDefault(); // Prevent default anchor behavior
+  showSection("admin-section", "admin-tab");
 });
+
+// Function to show the appropriate section and highlight the active tab
+function showSection(sectionId, tabId) {
+  // Hide all sections
+  document.getElementById("tracker-section").classList.add("hidden");
+  document.getElementById("admin-section").classList.add("hidden");
+
+  // Remove 'active' class from all tabs
+  document.getElementById("tracker-tab").classList.remove("active");
+  document.getElementById("admin-tab").classList.remove("active");
+
+  // Show the selected section
+  document.getElementById(sectionId).classList.remove("hidden");
+
+  // Highlight the active tab
+  document.getElementById(tabId).classList.add("active");
+}
 
 // Populate the dropdown and table on page load
 document.addEventListener("DOMContentLoaded", () => {
