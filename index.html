@@ -166,8 +166,8 @@
             <th>Status</th>
           </tr>
         </thead>
-        <tbody id="inventory-table">
-          <!-- Populated by script.js -->
+        <tbody id="inventory-table-body">
+          <!-- Rows populated by script.js -->
         </tbody>
       </table>
     </div>
@@ -197,7 +197,7 @@
   </section>
   -->
 
-  <!-- CHECK IN/OUT SECTION (HIDDEN) -->
+  <!-- CHECK IN/OUT SECTION -->
   <section id="checkio-section" class="hidden">
     <h2>Check In / Check Out</h2>
     <div class="form-container">
@@ -206,13 +206,20 @@
         <select id="checkio-item-name">
           <!-- Items populated by script.js -->
         </select>
-
+        <button type="button" id="btn-add-item">Add Item</button>
+    
+        <label id="selected-items-label" class="hidden">Selected Items</label>
+        <ul id="selected-items-list" class="hidden">
+          <!-- Selected items will be listed here -->
+        </ul>
+        <button type="button" id="btn-remove-all" class="hidden">Remove All</button>
+    
         <label for="checkio-user-name">Your Name</label>
         <input type="text" id="checkio-user-name" placeholder="Enter your name" required />
-
+    
         <label for="checkio-project-number">Project Number</label>
         <input type="text" id="checkio-project-number" placeholder="Enter project number" required />
-
+    
         <div style="display: flex; gap: 10px;">
           <button type="button" id="btn-checkin">Check In</button>
           <button type="button" id="btn-checkout">Check Out</button>
