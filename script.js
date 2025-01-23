@@ -5,31 +5,34 @@ const inventory = [
   { name: "HDMI Cable", status: "available" },
 ];
 
+// Switch between tabs
+document.getElementById("tracker-tab").addEventListener("click", () => {
+  document.getElementById("tracker-section").classList.remove("hidden");
+  document.getElementById("admin-section").classList.add("hidden");
+  document.getElementById("tracker-tab").classList.add("active");
+  document.getElementById("admin-tab").classList.remove("active");
+});
+
+document.getElementById("admin-tab").addEventListener("click", () => {
+  document.getElementById("admin-section").classList.remove("hidden");
+  document.getElementById("tracker-section").classList.add("hidden");
+  document.getElementById("admin-tab").classList.add("active");
+  document.getElementById("tracker-tab").classList.remove("active");
+});
+
 // Populate the dropdown and table on page load
 document.addEventListener("DOMContentLoaded", () => {
-  const itemNameDropdown = document.getElementById("item-name");
-  const inventoryTable = document.getElementById("inventory-table");
-
-  // Populate dropdown
-  inventory.forEach((item) => {
-    const option = document.createElement("option");
-    option.value = item.name;
-    option.textContent = item.name;
-    itemNameDropdown.appendChild(option);
-  });
-
-  // Populate table
+  updateDropdown();
   updateTable();
 });
 
-// Handle form submission
+// Handle inventory form submission
 document.getElementById("inventory-form").addEventListener("submit", (e) => {
   e.preventDefault();
 
   const itemName = document.getElementById("item-name").value;
   const action = document.getElementById("action").value;
 
-  // Update inventory
   const item = inventory.find((i) => i.name === itemName);
   if (item) {
     if (action === "check-out" && item.status === "available") {
@@ -42,15 +45,41 @@ document.getElementById("inventory-form").addEventListener("submit", (e) => {
     }
   }
 
-  // Refresh the table
   updateTable();
 });
+
+// Handle admin form submission
+document.getElementById("admin-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const newItemName = document.getElementById("new-item-name").value.trim();
+  if (newItemName && !inventory.some((i) => i.name === newItemName)) {
+    inventory.push({ name: newItemName, status: "available" });
+    alert(`Item "${newItemName}" added successfully!`);
+    document.getElementById("new-item-name").value = "";
+    updateDropdown();
+    updateTable();
+  } else {
+    alert("Item already exists or invalid name.");
+  }
+});
+
+// Update the dropdown dynamically
+function updateDropdown() {
+  const itemNameDropdown = document.getElementById("item-name");
+  itemNameDropdown.innerHTML = "";
+  inventory.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.name;
+    option.textContent = item.name;
+    itemNameDropdown.appendChild(option);
+  });
+}
 
 // Update the table dynamically
 function updateTable() {
   const inventoryTable = document.getElementById("inventory-table");
-  inventoryTable.innerHTML = ""; // Clear the table
-
+  inventoryTable.innerHTML = "";
   inventory.forEach((item) => {
     const row = document.createElement("tr");
 
