@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inventory Tracker</title>
   <style>
     * {
@@ -49,32 +49,32 @@
 
     .container {
       padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
+    /* Hidden helper class */
     .hidden {
       display: none;
     }
 
     .form-container, .table-container {
-      max-width: 600px;
-      margin: 20px auto;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
       background: #fff;
-      overflow: hidden;
-    }
-
-    .form-container {
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
       padding: 20px;
     }
 
-    label {
+    .form-container label {
       display: block;
       margin: 10px 0 5px;
       font-weight: bold;
     }
 
-    input, select, button {
+    .form-container input,
+    .form-container select,
+    .form-container button {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
@@ -83,54 +83,50 @@
       font-size: 16px;
     }
 
-    button {
+    .form-container button {
       background: #007BFF;
       color: #fff;
       cursor: pointer;
       transition: background 0.3s;
     }
 
-    button:hover {
+    .form-container button:hover {
       background: #0056b3;
     }
 
-    .table-container {
-      overflow-x: auto;
-    }
-
-    table {
+    .table-container table {
       width: 100%;
       border-collapse: collapse;
     }
 
-    table th, table td {
+    .table-container th,
+    .table-container td {
       padding: 10px;
-      text-align: left;
       border: 1px solid #ddd;
+      text-align: left;
     }
 
-    table th {
-      background: #007BFF;
+    .table-container th {
+      background-color: #007BFF;
       color: #fff;
-    }
-
-    .status {
-      font-weight: bold;
     }
 
     .status.available {
       color: green;
+      font-weight: bold;
     }
 
     .status.checked-out {
       color: red;
+      font-weight: bold;
     }
+
   </style>
 </head>
 <body>
   <header>
     <h1>Inventory Tracker</h1>
-    <p>Track and manage inventory.</p>
+    <p>Track and manage inventory in real-time.</p>
   </header>
 
   <!-- Navigation -->
@@ -139,15 +135,15 @@
     <a href="#" id="admin-tab">Admin Panel</a>
   </nav>
 
-  <!-- Content -->
   <div class="container">
-    <!-- Inventory Tracker Section -->
-    <div id="tracker-section">
+
+    <!-- Tracker Section -->
+    <section id="tracker-section">
       <div class="form-container">
         <form id="inventory-form">
           <label for="item-name">Item Name</label>
           <select id="item-name" required>
-            <!-- Options will be populated dynamically -->
+            <!-- Populated by JS -->
           </select>
 
           <label for="action">Action</label>
@@ -169,26 +165,26 @@
             </tr>
           </thead>
           <tbody id="inventory-table">
-            <!-- Rows will be populated dynamically -->
+            <!-- Populated by JS -->
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
 
-    <!-- Admin Panel Section -->
-    <div id="admin-section" class="hidden">
+    <!-- Admin Section -->
+    <section id="admin-section" class="hidden">
       <div class="form-container">
         <form id="admin-form">
           <label for="new-item-name">New Item Name</label>
-          <input type="text" id="new-item-name" placeholder="Enter item name" required>
+          <input type="text" id="new-item-name" placeholder="Enter item name" required/>
 
           <button type="submit">Add Item</button>
         </form>
       </div>
-    </div>
+    </section>
+
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
- 
