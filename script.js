@@ -33,10 +33,12 @@ function logInventoryChange(action, itemName, userName = "", projectNumber = "")
  * Update the inventory table
  */
 function updateTable() {
-  const tableBody = document.getElementById("inventory-table-body");
-  if (!tableBody) return;
+  const tableBodyCategory1 = document.getElementById("inventory-table-category1");
+  const tableBodyCategory2 = document.getElementById("inventory-table-category2");
+  if (!tableBodyCategory1 || !tableBodyCategory2) return;
 
-  tableBody.innerHTML = ""; // Clear out old rows
+  tableBodyCategory1.innerHTML = ""; // Clear out old rows
+  tableBodyCategory2.innerHTML = ""; // Clear out old rows
 
   inventory.forEach((item) => {
     const row = document.createElement("tr");
@@ -49,7 +51,13 @@ function updateTable() {
 
     row.appendChild(nameCell);
     row.appendChild(statusCell);
-    tableBody.appendChild(row);
+
+    // Add the row to the appropriate category table
+    if (item.category === "High Volume Pumps") {
+      tableBodyCategory1.appendChild(row);
+    } else if (item.category === "Low Volume Pumps") {
+      tableBodyCategory2.appendChild(row);
+    }
   });
 }
 
