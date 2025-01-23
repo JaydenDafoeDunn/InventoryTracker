@@ -5,186 +5,176 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inventory Tracker</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
+      margin: 20px;
     }
 
-    header {
-      text-align: center;
-      padding: 20px;
-      background-color: #007BFF;
-      color: white;
-    }
-
-    nav {
-      display: flex;
-      justify-content: center;
-      background: #007BFF;
-    }
-
+    /* Navigation links */
     nav a {
-      padding: 15px 20px;
+      margin-right: 10px;
       text-decoration: none;
-      color: white;
       font-weight: bold;
+      color: #007BFF;
       border-bottom: 2px solid transparent;
-      transition: border-color 0.3s;
+      padding: 5px;
     }
-
     nav a.active {
-      border-color: #fff;
+      color: #0056b3;
+      border-bottom: 2px solid #0056b3;
     }
 
-    nav a:hover {
-      border-color: #fff;
-    }
-
-    .container {
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    /* Hidden helper class */
     .hidden {
       display: none;
     }
 
-    .form-container, .table-container {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    /* Basic form-container styling */
+    .form-container {
       margin-bottom: 20px;
-      padding: 20px;
-    }
-
-    .form-container label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: bold;
-    }
-
-    .form-container input,
-    .form-container select,
-    .form-container button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
+      padding: 15px;
       border: 1px solid #ddd;
       border-radius: 5px;
-      font-size: 16px;
+      background-color: #f9f9f9;
+      max-width: 500px;
     }
 
-    .form-container button {
-      background: #007BFF;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s;
+    label {
+      display: block;
+      margin: 5px 0;
+      font-weight: bold;
     }
-
-    .form-container button:hover {
-      background: #0056b3;
-    }
-
-    .table-container table {
+    input, select, button {
       width: 100%;
-      border-collapse: collapse;
-    }
-
-    .table-container th,
-    .table-container td {
+      margin: 5px 0 15px;
       padding: 10px;
       border: 1px solid #ddd;
-      text-align: left;
+      border-radius: 5px;
     }
-
-    .table-container th {
+    button {
       background-color: #007BFF;
-      color: #fff;
-    }
-
-    .status.available {
-      color: green;
+      color: white;
       font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
     }
 
-    .status.checked-out {
-      color: red;
-      font-weight: bold;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #007BFF;
+      color: white;
     }
 
+    /* Log list styling */
+    #inventory-log {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 20px;
+      max-width: 500px;
+    }
+    #inventory-log li {
+      background: #f1f1f1;
+      margin-bottom: 5px;
+      padding: 10px;
+      border-left: 5px solid #007BFF;
+      border-radius: 3px;
+    }
+    h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
   </style>
 </head>
 <body>
+
   <header>
     <h1>Inventory Tracker</h1>
-    <p>Track and manage inventory in real-time.</p>
   </header>
 
   <!-- Navigation -->
   <nav>
-    <a href="#" id="tracker-tab" class="active">Inventory Tracker</a>
-    <a href="#" id="admin-tab">Admin Panel</a>
+    <a href="#" id="show-inventory" class="active">Inventory</a>
+    <!--<a href="#" id="show-admin">Admin Panel</a> -->
+    <a href="#" id="show-checkio">Check In/Out</a>
   </nav>
 
-  <div class="container">
+  <!-- Inventory Section -->
+  <section id="inventory-section">
+    <h2>Current Inventory</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="inventory-table">
+        <!-- Rows populated by script.js -->
+      </tbody>
+    </table>
+  </section>
 
-    <!-- Tracker Section -->
-    <section id="tracker-section">
-      <div class="form-container">
-        <form id="inventory-form">
-          <label for="item-name">Item Name</label>
-          <select id="item-name" required>
-            <!-- Populated by JS -->
-          </select>
+  <!-- Admin Section (hidden by default) -->
+  <section id="admin-section" class="hidden">
+    <h2>Admin Panel</h2>
+    <!-- Add Item Form -->
+    <div class="form-container">
+      <form id="add-item-form">
+        <label for="new-item-name">Add New Item</label>
+        <input type="text" id="new-item-name" placeholder="Enter item name" required />
+        <button type="submit">Add Item</button>
+      </form>
+    </div>
 
-          <label for="action">Action</label>
-          <select id="action" required>
-            <option value="check-out">Check Out</option>
-            <option value="check-in">Check In</option>
-          </select>
+    <!-- Remove Item Form -->
+    <div class="form-container">
+      <form id="remove-item-form">
+        <label for="remove-item-name">Remove Item</label>
+        <select id="remove-item-name">
+          <!-- Populated by script.js -->
+        </select>
+        <button type="submit">Remove Item</button>
+      </form>
+    </div>
+  </section>
 
-          <button type="submit">Update Inventory</button>
-        </form>
-      </div>
+  <!-- Check In/Out Section (hidden by default) -->
+  <section id="checkio-section" class="hidden">
+    <h2>Check In / Check Out</h2>
+    <div class="form-container">
+      <form id="checkio-form">
+        <label for="checkio-item-name">Select Item</label>
+        <select id="checkio-item-name">
+          <!-- Items populated by script.js -->
+        </select>
+        <label for="checkio-user-name">Your Name</label>
+        <input type="text" id="checkio-user-name" placeholder="Enter your name" required />
+        <label for="checkio-project-number">Project Number</label>
+        <input type="text" id="checkio-project-number" placeholder="Enter project number" required />
+        <button type="button" id="btn-checkin">Check In</button>
+        <button type="button" id="btn-checkout">Check Out</button>
+      </form>
+    </div>
+  </section>
 
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="inventory-table">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+  <!-- Log Section -->
+  <h2>Inventory Log</h2>
+  <ul id="inventory-log">
+    <!-- Log entries populated by script.js -->
+  </ul>
 
-    <!-- Admin Section -->
-    <section id="admin-section" class="hidden">
-      <div class="form-container">
-        <form id="admin-form">
-          <label for="new-item-name">New Item Name</label>
-          <input type="text" id="new-item-name" placeholder="Enter item name" required/>
-
-          <button type="submit">Add Item</button>
-        </form>
-      </div>
-    </section>
-
-  </div>
-
+  <!-- Main JavaScript file -->
   <script src="script.js"></script>
 </body>
 </html>
