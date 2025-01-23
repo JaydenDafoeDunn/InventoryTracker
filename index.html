@@ -39,7 +39,7 @@
       padding: 5px;
     }
     nav a.active {
-      color: #0056b3;
+      color: #007BFF;
       border-bottom: 2px solid #0056b3;
     }
 
@@ -139,12 +139,41 @@
       padding: 0 20px;
       text-align: center; /* Center the headings */
     }
-  </style>
+
+  /* COLLAPSIBLE BUTTONS */
+  .collapsible-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+
+  .collapsible {
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    width: 40%; /* Adjust the width to be slightly wider than the table */
+    border: none;
+    text-align: center; /* Center the text */
+    outline: none;
+    font-size: 18px;
+  }
+
+  .collapsible.active, .collapsible:hover {
+    background-color: #0056b3;
+  }
+
+  .content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+  }
+</style>
 </head>
 <body>
 
   <header>
-    <img src="Logo.jpg" alt="Logo" id="logo">
     <h1>Inventory Tracker</h1>
     <p>Track your items and update their status in real-time.</p>
   </header>
@@ -159,44 +188,46 @@
   <!-- INVENTORY SECTION -->
   <section id="inventory-section">
     <h2>Current Inventory</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="inventory-table-body">
-          <!-- Rows populated by script.js -->
-        </tbody>
-      </table>
+    <div class="collapsible-container">
+      <button class="collapsible">High Volume Pumps</button>
     </div>
-  </section>
-
-  <!-- ADMIN SECTION (HIDDEN) -->
-  <!--
-  <section id="admin-section" class="hidden">
-    <h2>Admin Panel</h2>
-    <div class="form-container">
-      <form id="add-item-form">
-        <label for="new-item-name">Add New Item</label>
-        <input type="text" id="new-item-name" placeholder="Enter item name" required />
-        <button type="submit">Add Item</button>
-      </form>
+    <div class="content">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table-category1">
+            <!-- Rows populated by script.js -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="form-container">
-      <form id="remove-item-form">
-        <label for="remove-item-name">Remove Item</label>
-        <select id="remove-item-name">
-          <!-- Populated by script.js
-        </select>
-        <button type="submit">Remove Item</button>
-      </form>
+    <div class="collapsible-container">
+      <button class="collapsible">Low Volume Pumps</button>
     </div>
+    <div class="content">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table-category2">
+            <!-- Rows populated by script.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add more categories as needed -->
   </section>
-  -->
 
   <!-- CHECK IN/OUT SECTION -->
   <section id="checkio-section" class="hidden">
@@ -237,5 +268,21 @@
 
   <!-- SCRIPT REFERENCE -->
   <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const collapsibles = document.querySelectorAll(".collapsible");
+      collapsibles.forEach((collapsible) => {
+        collapsible.addEventListener("click", function() {
+          this.classList.toggle("active");
+          const content = this.parentElement.nextElementSibling;
+          if (content.style.display === "block") {
+            content.style.display = "none";
+          } else {
+            content.style.display = "block";
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
