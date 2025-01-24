@@ -23,23 +23,20 @@ async function loadInventoryFromJSON() {
   const BIN_ID = process.env.JSONBIN_BIN_ID;
   const SECRET_KEY = process.env.JSONBIN_SECRET_KEY;
 
-  const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': SECRET_KEY,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to load inventory from JSONBin');
-  }
-
-  const data = await response.json();
-  if (Array.isArray(data.record) && data.record.every(item => typeof item.name === 'string' && typeof item.status === 'string')) {
-    inventory = data.record;
-  } else {
-    console.error("Invalid inventory data");
+  try {
+    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
+      headers: {
+        'X-Master-Key': SECRET_KEY,
+      },
+    });
+    const data = await response.json();
+    if (Array.isArray(data.record) && data.record.every(item => typeof item.name === 'string' && typeof item.status === 'string')) {
+      inventory = data.record;
+    } else {
+      console.error("Invalid inventory data");
+    }
+  } catch (error) {
+    console.error("Error fetching inventory from JSONBIN:", error);
   }
 }
 
