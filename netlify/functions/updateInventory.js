@@ -1,5 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+const fetch = require('node-fetch');
+
+const JSONBIN_API_URL = 'https://api.jsonbin.io/v3/b';
+const BIN_ID = process.env.JSONBIN_BIN_ID;
+const SECRET_KEY = process.env.JSONBIN_SECRET_KEY;
 
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
@@ -10,10 +13,21 @@ exports.handler = async (event, context) => {
   }
 
   const data = JSON.parse(event.body);
-  const filePath = path.resolve(__dirname, '../../inventory.json');
 
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': SECRET_KEY,
+      },
+      body: JSON.stringify(data, null, 2),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update inventory on JSONBin');
+    }
+
     return {
       statusCode: 200,
       body: 'Inventory updated successfully',
