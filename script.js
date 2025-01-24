@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 async function loadInventoryFromServer() {
   try {
-    const response = await fetch('/.netlify/functions/fetchInventory');
+    const response = await fetch('/.netlify/functions/getInventory');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
