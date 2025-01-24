@@ -298,10 +298,9 @@
         </select>
         
         <label for="checkio-item-name">Select Item</label>
-        <select id="checkio-item-name">
+        <select id="checkio-item-name" onchange="addItemToList()">
           <!-- Items populated by script.js -->
         </select>
-        <button type="button" id="btn-add-item">Add Item</button>
         
         <label id="selected-items-label" class="hidden">Selected Items</label>
         <ul id="selected-items-list" class="hidden">
