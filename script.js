@@ -63,6 +63,11 @@ function updateTable() {
 
     const statusCell = document.createElement("td");
     statusCell.textContent = item.status;
+    if (item.status === "available") {
+      statusCell.classList.add("status-available");
+    } else if (item.status === "checked-out") {
+      statusCell.classList.add("status-checked-out");
+    }
 
     row.appendChild(nameCell);
     row.appendChild(statusCell);
