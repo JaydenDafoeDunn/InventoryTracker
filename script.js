@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setupTabs();
       setupForms();
       updateTable();
-      updateDropdowns();
+      updateCategoryDropdown();
       showTab("checkio");
     })
     .catch((error) => {
@@ -46,10 +46,14 @@ function logInventoryChange(action, itemName, userName = "", projectNumber = "")
 function updateTable() {
   const tableBodyCategory1 = document.getElementById("inventory-table-category1");
   const tableBodyCategory2 = document.getElementById("inventory-table-category2");
-  if (!tableBodyCategory1 || !tableBodyCategory2) return;
+  const tableBodyCategory3 = document.getElementById("inventory-table-category3");
+  const tableBodyCategory4 = document.getElementById("inventory-table-category4");
+  if (!tableBodyCategory1 || !tableBodyCategory2 || !tableBodyCategory3 || !tableBodyCategory4) return;
 
   tableBodyCategory1.innerHTML = ""; // Clear out old rows
   tableBodyCategory2.innerHTML = ""; // Clear out old rows
+  tableBodyCategory3.innerHTML = ""; // Clear out old rows
+  tableBodyCategory4.innerHTML = ""; // Clear out old rows
 
   inventory.forEach((item) => {
     const row = document.createElement("tr");
@@ -68,7 +72,52 @@ function updateTable() {
       tableBodyCategory1.appendChild(row);
     } else if (item.category === "Low Volume Pumps") {
       tableBodyCategory2.appendChild(row);
+    } else if (item.category === "Timers") {
+      tableBodyCategory3.appendChild(row);
+    } else if (item.category === "Pump Stands") {
+      tableBodyCategory4.appendChild(row);
     }
+  });
+}
+
+/**
+ * Populate category dropdown with unique categories from the inventory
+ */
+function updateCategoryDropdown() {
+  const categoryDropdown = document.getElementById("checkio-category-name");
+  if (!categoryDropdown) return;
+
+  const categories = [...new Set(inventory.map(item => item.category))];
+  categoryDropdown.innerHTML = "";
+
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryDropdown.appendChild(option);
+  });
+
+  categoryDropdown.addEventListener("change", updateItemDropdown);
+  updateItemDropdown(); // Initial population of items dropdown
+}
+
+/**
+ * Populate items dropdown based on the selected category
+ */
+function updateItemDropdown() {
+  const categoryDropdown = document.getElementById("checkio-category-name");
+  const itemDropdown = document.getElementById("checkio-item-name");
+  if (!categoryDropdown || !itemDropdown) return;
+
+  const selectedCategory = categoryDropdown.value;
+  const items = inventory.filter(item => item.category === selectedCategory);
+  itemDropdown.innerHTML = "";
+
+  items.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.name;
+    option.textContent = item.name;
+    itemDropdown.appendChild(option);
   });
 }
 
@@ -76,29 +125,7 @@ function updateTable() {
  * Populate dropdowns with the current inventory
  */
 function updateDropdowns() {
-  const checkioDropdown = document.getElementById("checkio-item-name");
-  if (checkioDropdown) {
-    checkioDropdown.innerHTML = "";
-
-    inventory.forEach((item) => {
-      const option = document.createElement("option");
-      option.value = item.name;
-      option.textContent = item.name;
-      checkioDropdown.appendChild(option);
-    });
-  }
-
-  const removeDropdown = document.getElementById("remove-item-name");
-  if (removeDropdown) {
-    removeDropdown.innerHTML = "";
-
-    inventory.forEach((item) => {
-      const option = document.createElement("option");
-      option.value = item.name;
-      option.textContent = item.name;
-      removeDropdown.appendChild(option);
-    });
-  }
+  updateCategoryDropdown();
 }
 
 /**
