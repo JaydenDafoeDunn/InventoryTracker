@@ -1,6 +1,6 @@
 let inventory = [];
 document.addEventListener("DOMContentLoaded", () => {
-  loadInventoryFromJSON()
+  loadInventoryFromServer()
     .then(() => {
       setupTabs();
       setupForms();
@@ -16,10 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Load inventory from JSON file
+ * Load inventory from the server
  */
-async function loadInventoryFromJSON() {
-  const response = await fetch("inventory.json");
+async function loadInventoryFromServer() {
+  const response = await fetch('/.netlify/functions/updateInventory');
   const data = await response.json();
   if (Array.isArray(data) && data.every(item => typeof item.name === 'string' && typeof item.status === 'string')) {
     inventory = data;
@@ -167,16 +167,10 @@ function setupForms() {
   const btnCheckOut = document.getElementById("btn-checkout");
 
   if (btnCheckIn) {
-    btnCheckIn.addEventListener("click", async () => {
-      await checkInItems();
-      await updateInventoryOnServer(inventory);
-    });
+    btnCheckIn.addEventListener("click", checkInItems);
   }
   if (btnCheckOut) {
-    btnCheckOut.addEventListener("click", async () => {
-      await checkOutItems();
-      await updateInventoryOnServer(inventory);
-    });
+    btnCheckOut.addEventListener("click", checkOutItems);
   }
 }
 
@@ -216,7 +210,7 @@ function removeAllItems() {
   }
 }
 
-async function checkInItems() {
+function checkInItems() {
   const selectedItemsList = document.getElementById("selected-items-list");
   const userName = document.getElementById('checkio-user-name').value;
   const projectNumber = document.getElementById('checkio-project-number').value;
@@ -250,7 +244,7 @@ async function checkInItems() {
   selectedItemsList.innerHTML = "";
 }
 
-async function checkOutItems() {
+function checkOutItems() {
   const selectedItemsList = document.getElementById("selected-items-list");
   const userName = document.getElementById('checkio-user-name').value;
   const projectNumber = document.getElementById('checkio-project-number').value;
