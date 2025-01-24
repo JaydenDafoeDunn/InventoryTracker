@@ -355,3 +355,4 @@ async function updateInventoryOnServer(newInventory) {
   if (!response.ok) {
     throw new Error('Failed to update inventory on server');
   }
+}
