@@ -187,9 +187,10 @@ function setupForms() {
     });
   }
 
-  const btnAddItem = document.getElementById("btn-add-item");
-  if (btnAddItem) {
-    btnAddItem.addEventListener("click", addItemToList);
+  const selectItemDropdown = document.getElementById("checkio-item-name");
+  if (selectItemDropdown) {
+    selectItemDropdown.addEventListener("change", addItemToList);
+    selectItemDropdown.addEventListener("click", addItemToList);
   }
 
   const btnRemoveAll = document.getElementById("btn-remove-all");
