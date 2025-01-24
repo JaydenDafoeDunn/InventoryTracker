@@ -10,7 +10,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const filePath = path.resolve(__dirname, 'inventory.json');
+    const filePath = path.resolve(__dirname, 'trackedInventory.json');
     const newInventory = JSON.parse(event.body);
     fs.writeFileSync(filePath, JSON.stringify(newInventory, null, 2));
     return {
