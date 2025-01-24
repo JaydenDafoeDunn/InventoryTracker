@@ -1,0 +1,26 @@
+{
+  "name": "inventorytracker",
+  "version": "1.0.0",
+  "description": "inventorytracker app",
+  "main": "script.js",
+  "scripts": {
+    "start": "node script.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JaydenDafoeDunn/InventoryTracker.git"
+  },
+  "author": "Jayden Dafoe-Dunn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JaydenDafoeDunn/InventoryTracker/issues"
+  },
+  "homepage": "https://github.com/JaydenDafoeDunn/InventoryTracker#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.1" 
+  },
+  "engines": {
+    "node": ">=16.13.0"
+  }
+}
