@@ -268,34 +268,6 @@ function addItemToList() {
   selectedItemsLabel.classList.remove("hidden");
   selectedItemsList.classList.remove("hidden");
   btnRemoveAll.classList.remove("hidden");
-}
-
-function addItemToList() {
-  const select = document.getElementById("checkio-item-name");
-  const selectedItemsList = document.getElementById("selected-items-list");
-  const selectedItemsLabel = document.getElementById("selected-items-label");
-  const btnRemoveAll = document.getElementById("btn-remove-all");
-  if (!select || !selectedItemsList) return;
-
-  const itemName = select.value;
-  if (!itemName) return;
-
-  // Check if the item is already in the list
-  const existingItem = Array.from(selectedItemsList.children).find(
-    (item) => item.dataset.itemName === itemName
-  );
-  if (existingItem) return;
-
-  const listItem = document.createElement("li");
-  listItem.textContent = itemName;
-  listItem.dataset.itemName = itemName;
-
-  selectedItemsList.appendChild(listItem);
-
-  // Show the selected items label and remove all button
-  selectedItemsLabel.classList.remove("hidden");
-  selectedItemsList.classList.remove("hidden");
-  btnRemoveAll.classList.remove("hidden");
 
   // Reset the dropdown to the placeholder option
   select.value = "";
