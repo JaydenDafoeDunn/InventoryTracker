@@ -84,7 +84,6 @@ function updateTable() {
     }
   });
 }
-
 /**
  * Populate category dropdown with unique categories from the inventory
  */
