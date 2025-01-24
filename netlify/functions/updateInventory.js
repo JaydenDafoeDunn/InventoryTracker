@@ -15,24 +15,30 @@ exports.handler = async (event, context) => {
   const data = JSON.parse(event.body);
 
   try {
-    const response = await fetch(`${JSONBIN_API_URL}/${JSONBIN_BIN_ID}`, {
+    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_SECRET_KEY,
+        'X-Master-Key': SECRET_KEY,
       },
       body: JSON.stringify(data, null, 2),
     });
 
+    const responseBody = await response.json();
+
     if (!response.ok) {
+      console.error('Failed to update inventory on JSONBin:', responseBody);
       throw new Error('Failed to update inventory on JSONBin');
     }
+
+    console.log('Inventory updated successfully:', responseBody);
 
     return {
       statusCode: 200,
       body: 'Inventory updated successfully',
     };
   } catch (error) {
+    console.error('Error updating inventory:', error.message);
     return {
       statusCode: 500,
       body: `Error updating inventory: ${error.message}`,
