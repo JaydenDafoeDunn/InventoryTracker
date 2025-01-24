@@ -187,45 +187,84 @@
   </nav>
 
   <!-- INVENTORY SECTION -->
-  <section id="inventory-section">
-    <h2>Current Inventory</h2>
-    <div class="collapsible-container">
-      <button class="collapsible">High Volume Pumps</button>
-    </div>
-    <div class="content">
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="inventory-table-category1">
-            <!-- Rows populated by script.js -->
-          </tbody>
-        </table>
+    <section id="inventory-section">
+      <h2>Current Inventory</h2>
+      <div class="collapsible-container">
+        <button class="collapsible">High Volume Pumps</button>
       </div>
-    </div>
-
-    <div class="collapsible-container">
-      <button class="collapsible">Low Volume Pumps</button>
-    </div>
-    <div class="content">
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="inventory-table-category2">
-            <!-- Rows populated by script.js -->
-          </tbody>
-        </table>
+      <div class="content">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-category1">
+              <!-- Rows populated by script.js -->
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    
+      <div class="collapsible-container">
+        <button class="collapsible">Low Volume Pumps</button>
+      </div>
+      <div class="content">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-category2">
+              <!-- Rows populated by script.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    
+      <div class="collapsible-container">
+        <button class="collapsible">Timers</button>
+      </div>
+      <div class="content">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-category3">
+              <!-- Rows populated by script.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    
+      <div class="collapsible-container">
+        <button class="collapsible">Pump Stands</button>
+      </div>
+      <div class="content">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-category4">
+              <!-- Rows populated by script.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
     <!-- Add more categories as needed -->
   </section>
@@ -235,24 +274,29 @@
     <h2>Check In / Check Out</h2>
     <div class="form-container">
       <form id="checkio-form">
+        <label for="checkio-category-name">Select Category</label>
+        <select id="checkio-category-name">
+          <!-- Categories populated by script.js -->
+        </select>
+        
         <label for="checkio-item-name">Select Item</label>
         <select id="checkio-item-name">
           <!-- Items populated by script.js -->
         </select>
         <button type="button" id="btn-add-item">Add Item</button>
-    
+        
         <label id="selected-items-label" class="hidden">Selected Items</label>
         <ul id="selected-items-list" class="hidden">
           <!-- Selected items will be listed here -->
         </ul>
         <button type="button" id="btn-remove-all" class="hidden">Remove All</button>
-    
+        
         <label for="checkio-user-name">Your Name</label>
         <input type="text" id="checkio-user-name" placeholder="Enter your name" required />
-    
+        
         <label for="checkio-project-number">Project Number</label>
         <input type="text" id="checkio-project-number" placeholder="Enter project number" required />
-    
+        
         <div style="display: flex; gap: 10px;">
           <button type="button" id="btn-checkin">Check In</button>
           <button type="button" id="btn-checkout">Check Out</button>
