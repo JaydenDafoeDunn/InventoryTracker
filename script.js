@@ -111,7 +111,6 @@ function updateTable() {
     }
   });
 }
-
 /**
  * Populate category dropdown with unique categories from the inventory
  */
@@ -184,7 +183,7 @@ function setupForms() {
           alert("Item already exists.");
         } else {
           inventory.push({ name: newItemName, status: "available" });
-          await logInventoryChange("Added", newItemName);
+          logInventoryChange("Added", newItemName);
           alert(`"${newItemName}" added!`);
           document.getElementById("new-item-name").value = "";
           updateTable();
@@ -206,7 +205,7 @@ function setupForms() {
         alert("Item not found.");
       } else {
         inventory.splice(index, 1);
-        await logInventoryChange("Removed", removeName);
+        logInventoryChange("Removed", removeName);
         alert(`"${removeName}" removed.`);
         updateTable();
         updateDropdowns();
@@ -215,9 +214,10 @@ function setupForms() {
     });
   }
 
-  const btnAddItem = document.getElementById("btn-add-item");
-  if (btnAddItem) {
-    btnAddItem.addEventListener("click", addItemToList);
+  const selectItemDropdown = document.getElementById("checkio-item-name");
+  if (selectItemDropdown) {
+    selectItemDropdown.addEventListener("change", addItemToList);
+    selectItemDropdown.addEventListener("blur", addItemToList);
   }
 
   const btnRemoveAll = document.getElementById("btn-remove-all");
@@ -269,8 +269,8 @@ function addItemToList() {
   selectedItemsList.classList.remove("hidden");
   btnRemoveAll.classList.remove("hidden");
 
-  // Reset the dropdown to the first option
-  select.selectedIndex = 0;
+  // Reset the dropdown to the placeholder option
+  select.value = "";
 }
 
 function removeAllItems() {
