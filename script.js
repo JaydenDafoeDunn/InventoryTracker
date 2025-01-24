@@ -222,7 +222,7 @@ function addItemToList() {
   if (!select || !selectedItemsList) return;
 
   const itemName = select.value;
-  if (!itemName) return alert("Please select an item.");
+  if (!itemName) return;
 
   const listItem = document.createElement("li");
   listItem.textContent = itemName;
