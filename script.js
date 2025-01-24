@@ -241,6 +241,9 @@ function addItemToList() {
   selectedItemsLabel.classList.remove("hidden");
   selectedItemsList.classList.remove("hidden");
   btnRemoveAll.classList.remove("hidden");
+
+  // Reset the dropdown to the placeholder option
+  select.value = "";
 }
 
 function removeAllItems() {
