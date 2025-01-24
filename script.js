@@ -18,25 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * Load inventory from JSON file
  */
-async function loadInventoryFromJSON() {
-  const JSONBIN_API_URL = 'https://api.jsonbin.io/v3/b';
-  const BIN_ID = process.env.JSONBIN_BIN_ID;
-  const SECRET_KEY = process.env.JSONBIN_SECRET_KEY;
-
+async function loadInventoryFromServer() {
   try {
-    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
-      headers: {
-        'X-Master-Key': SECRET_KEY,
-      },
-    });
-    const data = await response.json();
-    if (Array.isArray(data.record) && data.record.every(item => typeof item.name === 'string' && typeof item.status === 'string')) {
-      inventory = data.record;
-    } else {
-      console.error("Invalid inventory data");
+    const response = await fetch('/.netlify/functions/fetchInventory');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
+    inventory = data;
   } catch (error) {
-    console.error("Error fetching inventory from JSONBIN:", error);
+    console.error("Error fetching inventory from server:", error);
   }
 }
 
