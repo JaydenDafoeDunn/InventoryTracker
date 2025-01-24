@@ -15,11 +15,11 @@ exports.handler = async (event, context) => {
   const data = JSON.parse(event.body);
 
   try {
-    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}`, {
+    const response = await fetch(`${JSONBIN_API_URL}/${JSONBIN_BIN_ID}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Master-Key': SECRET_KEY,
+        'X-Master-Key': JSONBIN_SECRET_KEY,
       },
       body: JSON.stringify(data, null, 2),
     });
