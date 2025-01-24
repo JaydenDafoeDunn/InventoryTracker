@@ -31,39 +31,12 @@ async function loadInventoryFromServer() {
   }
 }
 
-async function logInventoryChange(action, itemName, userName = "", projectNumber = "") {
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    action,
-    itemName,
-    userName,
-    projectNumber
-  };
-
-  try {
-    const response = await fetch('/.netlify/functions/logInventoryChange', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(logEntry),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Log entry added:', data);
-  } catch (error) {
-    console.error('Error logging inventory change:', error);
-  }
-
-  const logEntryElement = document.createElement("li");
-  logEntryElement.textContent = `${new Date().toLocaleString()}: ${action} - ${itemName} by ${userName} for project ${projectNumber}`;
+function logInventoryChange(action, itemName, userName = "", projectNumber = "") {
+  const logEntry = document.createElement("li");
+  logEntry.textContent = `${new Date().toLocaleString()}: ${action} - ${itemName} by ${userName} for project ${projectNumber}`;
   const inventoryLog = document.getElementById("inventory-log");
   if (inventoryLog) {
-    inventoryLog.appendChild(logEntryElement);
+    inventoryLog.appendChild(logEntry);
   }
 }
 
@@ -111,7 +84,6 @@ function updateTable() {
     }
   });
 }
-
 /**
  * Populate category dropdown with unique categories from the inventory
  */
@@ -184,7 +156,7 @@ function setupForms() {
           alert("Item already exists.");
         } else {
           inventory.push({ name: newItemName, status: "available" });
-          await logInventoryChange("Added", newItemName);
+          logInventoryChange("Added", newItemName);
           alert(`"${newItemName}" added!`);
           document.getElementById("new-item-name").value = "";
           updateTable();
@@ -206,7 +178,7 @@ function setupForms() {
         alert("Item not found.");
       } else {
         inventory.splice(index, 1);
-        await logInventoryChange("Removed", removeName);
+        logInventoryChange("Removed", removeName);
         alert(`"${removeName}" removed.`);
         updateTable();
         updateDropdowns();
@@ -215,9 +187,10 @@ function setupForms() {
     });
   }
 
-  const btnAddItem = document.getElementById("btn-add-item");
-  if (btnAddItem) {
-    btnAddItem.addEventListener("click", addItemToList);
+  const selectItemDropdown = document.getElementById("checkio-item-name");
+  if (selectItemDropdown) {
+    selectItemDropdown.addEventListener("change", addItemToList);
+    selectItemDropdown.addEventListener("blur", addItemToList);
   }
 
   const btnRemoveAll = document.getElementById("btn-remove-all");
