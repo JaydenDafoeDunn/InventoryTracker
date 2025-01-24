@@ -1,6 +1,6 @@
 let inventory = [];
 document.addEventListener("DOMContentLoaded", () => {
-  loadInventoryFromServer()
+  loadInventoryFromJSON()
     .then(() => {
       setupTabs();
       setupForms();
@@ -16,10 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Load inventory from the server
+ * Load inventory from JSON file
  */
-async function loadInventoryFromServer() {
-  const response = await fetch('/.netlify/functions/updateInventory');
+async function loadInventoryFromJSON() {
+  const response = await fetch("inventory.json");
   const data = await response.json();
   if (Array.isArray(data) && data.every(item => typeof item.name === 'string' && typeof item.status === 'string')) {
     inventory = data;
@@ -167,10 +167,16 @@ function setupForms() {
   const btnCheckOut = document.getElementById("btn-checkout");
 
   if (btnCheckIn) {
-    btnCheckIn.addEventListener("click", checkInItems);
+    btnCheckIn.addEventListener("click", async () => {
+      await checkInItems();
+      await updateInventoryOnServer(inventory);
+    });
   }
   if (btnCheckOut) {
-    btnCheckOut.addEventListener("click", checkOutItems);
+    btnCheckOut.addEventListener("click", async () => {
+      await checkOutItems();
+      await updateInventoryOnServer(inventory);
+    });
   }
 }
 
@@ -210,7 +216,7 @@ function removeAllItems() {
   }
 }
 
-function checkInItems() {
+async function checkInItems() {
   const selectedItemsList = document.getElementById("selected-items-list");
   const userName = document.getElementById('checkio-user-name').value;
   const projectNumber = document.getElementById('checkio-project-number').value;
@@ -244,7 +250,7 @@ function checkInItems() {
   selectedItemsList.innerHTML = "";
 }
 
-function checkOutItems() {
+async function checkOutItems() {
   const selectedItemsList = document.getElementById("selected-items-list");
   const userName = document.getElementById('checkio-user-name').value;
   const projectNumber = document.getElementById('checkio-project-number').value;
@@ -349,4 +355,3 @@ async function updateInventoryOnServer(newInventory) {
   if (!response.ok) {
     throw new Error('Failed to update inventory on server');
   }
-}
