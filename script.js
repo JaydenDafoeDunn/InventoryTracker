@@ -31,12 +31,39 @@ async function loadInventoryFromServer() {
   }
 }
 
-function logInventoryChange(action, itemName, userName = "", projectNumber = "") {
-  const logEntry = document.createElement("li");
-  logEntry.textContent = `${new Date().toLocaleString()}: ${action} - ${itemName} by ${userName} for project ${projectNumber}`;
+async function logInventoryChange(action, itemName, userName = "", projectNumber = "") {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    action,
+    itemName,
+    userName,
+    projectNumber
+  };
+
+  try {
+    const response = await fetch('/.netlify/functions/logInventoryChange', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(logEntry),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Log entry added:', data);
+  } catch (error) {
+    console.error('Error logging inventory change:', error);
+  }
+
+  const logEntryElement = document.createElement("li");
+  logEntryElement.textContent = `${new Date().toLocaleString()}: ${action} - ${itemName} by ${userName} for project ${projectNumber}`;
   const inventoryLog = document.getElementById("inventory-log");
   if (inventoryLog) {
-    inventoryLog.appendChild(logEntry);
+    inventoryLog.appendChild(logEntryElement);
   }
 }
 
