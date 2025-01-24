@@ -190,7 +190,7 @@ function setupForms() {
   const selectItemDropdown = document.getElementById("checkio-item-name");
   if (selectItemDropdown) {
     selectItemDropdown.addEventListener("change", addItemToList);
-    selectItemDropdown.addEventListener("click", addItemToList);
+    selectItemDropdown.addEventListener("blur", addItemToList);
   }
 
   const btnRemoveAll = document.getElementById("btn-remove-all");
@@ -224,6 +224,12 @@ function addItemToList() {
 
   const itemName = select.value;
   if (!itemName) return;
+
+  // Check if the item is already in the list
+  const existingItem = Array.from(selectedItemsList.children).find(
+    (item) => item.dataset.itemName === itemName
+  );
+  if (existingItem) return;
 
   const listItem = document.createElement("li");
   listItem.textContent = itemName;
