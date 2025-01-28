@@ -178,7 +178,7 @@ function updateItemDropdown() {
   placeholderOption.value = "";
   placeholderOption.textContent = "Please Select an Item";
   itemDropdown.appendChild(placeholderOption);
-  
+
   items.forEach((item) => {
     const option = document.createElement("option");
     option.value = item.name;
@@ -331,7 +331,7 @@ async function checkInItems() {
 
   let errorMessages = [];
 
-  items.forEach((item) => {
+  for (const item of items) {
     const itemName = item.dataset.itemName;
     const inventoryItem = inventory.find((i) => i.name === itemName);
     if (inventoryItem) {
@@ -341,11 +341,12 @@ async function checkInItems() {
         inventoryItem.timeCheckedOut = "";
         inventoryItem.initial = "";
         logInventoryChange("Checked In", itemName, userName, projectNumber);
+        await updateInventoryOnServer(itemName, "available");
       } else {
         errorMessages.push(`"${itemName}" is already checked in.`);
       }
     }
-  });
+  }
 
   if (errorMessages.length > 0) {
     alert(errorMessages.join("\n"));
@@ -368,7 +369,7 @@ async function checkOutItems() {
 
   let errorMessages = [];
 
-  items.forEach((item) => {
+  for (const item of items) {
     const itemName = item.dataset.itemName;
     const inventoryItem = inventory.find((i) => i.name === itemName);
     if (inventoryItem) {
@@ -386,11 +387,12 @@ async function checkOutItems() {
 
         inventoryItem.initial = userName;
         logInventoryChange("Checked Out", itemName, userName, projectNumber);
+        await updateInventoryOnServer(itemName, "checked-out");
       } else {
         errorMessages.push(`"${itemName}" is already checked out.`);
       }
     }
-  });
+  }
 
   if (errorMessages.length > 0) {
     alert(errorMessages.join("\n"));
@@ -461,13 +463,23 @@ function setupTabs() {
 /**
  * Update the inventory on the server
  */
-async function updateInventoryOnServer(newInventory) {
+/**
+ * Update the status of an item on the server
+ */
+async function updateInventoryOnServer(itemName, newStatus) {
+  const item = inventory.find(i => i.name === itemName);
+  if (!item) {
+    throw new Error('Item not found in inventory');
+  }
+
+  item.status = newStatus;
+
   const response = await fetch('/.netlify/functions/updateInventory', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(newInventory),
+    body: JSON.stringify(inventory),
   });
 
   if (!response.ok) {
