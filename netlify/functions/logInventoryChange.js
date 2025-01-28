@@ -17,7 +17,6 @@ exports.handler = async function(event, context) {
   try {
     // Fetch existing logs
     const fetchResponse = await fetch(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
-      console.log('FetchResponse Status:', fetchResponse.status);
       headers: {
         'X-Master-Key': SECRET_KEY,
       },
@@ -26,6 +25,7 @@ exports.handler = async function(event, context) {
     if (!fetchResponse.ok) {
       throw new Error(`HTTP error! status: ${fetchResponse.status}`);
     }
+    console.log('BIN_ID from inventory update:', process.env.JSONBIN_BIN_LOG_ID);
 
     const fetchData = await fetchResponse.json();
     let logs = fetchData.record || [];

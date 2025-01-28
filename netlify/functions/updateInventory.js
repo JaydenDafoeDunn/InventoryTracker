@@ -23,6 +23,8 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify(data, null, 2),
     });
+    console.log('BIN_ID from inventory update:', process.env.JSONBIN_BIN_ID);
+
 
     if (!response.ok) {
       throw new Error('Failed to update inventory on JSONBin');
