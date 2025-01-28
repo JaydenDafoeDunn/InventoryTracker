@@ -197,9 +197,7 @@ function updateDropdowns() {
  *  - Check In/Out
  */
 function sanitizeInput(input) {
-  const div = document.createElement('div');
-  div.textContent = input;
-  return div.innerHTML;
+  return DOMPurify.sanitize(input);
 }
 
 function setupForms() {
