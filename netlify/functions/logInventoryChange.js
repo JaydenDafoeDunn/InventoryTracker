@@ -25,7 +25,7 @@ exports.handler = async function(event, context) {
     if (!fetchResponse.ok) {
       throw new Error(`HTTP error! status: ${fetchResponse.status}`);
     }
-    console.log('BIN_ID from inventory update:', process.env.JSONBIN_BIN_LOG_ID);
+    console.log('BIN_ID from inventory update:', BIN_ID);
 
     const fetchData = await fetchResponse.json();
     let logs = fetchData.record || [];
