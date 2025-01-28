@@ -380,7 +380,7 @@ async function checkOutItems() {
         const year = String(now.getFullYear()).slice(-2);
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        inventoryItem.timeCheckedOut = `${day}${month}${year} ${hours}${minutes}`;
+        inventoryItem.timeCheckedOut = `${hours}:${minutes} ${month}/${day}/${year}`;
 
         inventoryItem.initial = userName;
         logInventoryChange("Checked Out", itemName, userName, projectNumber);
