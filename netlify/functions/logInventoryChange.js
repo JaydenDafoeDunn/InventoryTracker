@@ -15,23 +15,46 @@ exports.handler = async function(event, context) {
   const logEntry = JSON.parse(event.body);
 
   try {
-    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}`, {
+    // Fetch existing logs
+    const fetchResponse = await fetch(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
+      headers: {
+        'X-Master-Key': SECRET_KEY,
+      },
+    });
+
+    if (!fetchResponse.ok) {
+      throw new Error(`HTTP error! status: ${fetchResponse.status}`);
+    }
+
+    const fetchData = await fetchResponse.json();
+    let logs = fetchData.record || [];
+
+    // Append new log entry
+    logs.push(logEntry);
+
+    // Ensure the number of logs does not exceed 500
+    if (logs.length > 500) {
+      logs = logs.slice(logs.length - 500);
+    }
+
+    // Update logs in JSONBin
+    const updateResponse = await fetch(`${JSONBIN_API_URL}/${BIN_ID}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'X-Master-Key': SECRET_KEY,
       },
-      body: JSON.stringify(logEntry),
+      body: JSON.stringify(logs),
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!updateResponse.ok) {
+      throw new Error(`HTTP error! status: ${updateResponse.status}`);
     }
 
-    const data = await response.json();
+    const updateData = await updateResponse.json();
     return {
       statusCode: 200,
-      body: JSON.stringify(data),
+      body: JSON.stringify(updateData),
     };
   } catch (error) {
     return {
