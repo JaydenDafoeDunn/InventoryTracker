@@ -6,7 +6,7 @@ const SECRET_KEY = process.env.JSONBIN_SECRET_KEY;
 
 exports.handler = async (event, context) => {
   try {
-    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
+    const response = await fetch(`${JSONBIN_API_URL}/${BIN_ID}`, {
       headers: {
         'X-Master-Key': SECRET_KEY,
       },
