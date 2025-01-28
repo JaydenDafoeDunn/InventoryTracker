@@ -173,7 +173,7 @@ function updateItemDropdown() {
 
   const selectedCategory = categoryDropdown.value;
   const items = inventory.filter(item => item.category === selectedCategory);
-  itemDropdown.innerHTML = "Please Select an Item";
+  itemDropdown.innerHTML = "";
 
   items.forEach((item) => {
     const option = document.createElement("option");
