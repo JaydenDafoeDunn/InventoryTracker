@@ -120,7 +120,7 @@ function updateTable() {
     const timeCheckedOutCell = document.createElement("td");
     timeCheckedOutCell.textContent = item.timeCheckedOut || "";
 
-    const checkedOutByCell = document.createElement("td");
+    const initialCell = document.createElement("td");
     initialCell.textContent = item.initial || "";
 
     row.appendChild(nameCell);
