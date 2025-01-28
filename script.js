@@ -68,6 +68,24 @@ async function logInventoryChange(action, itemName, userName = "", projectNumber
 }
 
 /**
+ * Collapsible functiona;ity for inventory tables
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  const collapsibles = document.querySelectorAll(".collapsible");
+  collapsibles.forEach((collapsible) => {
+    collapsible.addEventListener("click", function() {
+      this.classList.toggle("active");
+      const content = this.parentElement.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  });
+});
+
+/**
  * Update the inventory table
  */
 function updateTable() {
