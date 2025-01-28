@@ -114,8 +114,16 @@ function updateTable() {
       statusCell.classList.add("status-checked-out");
     }
 
+    const checkedOutByCell = document.createElement("td");
+    checkedOutByCell.textContent = item.checkedOutBy || "";
+
+    const projectNumberCell = document.createElement("td");
+    projectNumberCell.textContent = item.projectNumber || "";
+
     row.appendChild(nameCell);
     row.appendChild(statusCell);
+    row.appendChild(checkedOutByCell);
+    row.appendChild(projectNumberCell);
 
     // Add the row to the appropriate category table
     if (item.category === "High Volume Pumps") {
@@ -322,6 +330,8 @@ async function checkInItems() {
     if (inventoryItem) {
       if (inventoryItem.status === "checked-out") {
         inventoryItem.status = "available";
+        inventoryItem.checkedOutBy = "";
+        inventoryItem.projectNumber = "";
         logInventoryChange("Checked In", itemName, userName, projectNumber);
       } else {
         errorMessages.push(`"${itemName}" is already checked in.`);
@@ -356,6 +366,8 @@ async function checkOutItems() {
     if (inventoryItem) {
       if (inventoryItem.status === "available") {
         inventoryItem.status = "checked-out";
+        inventoryItem.checkedOutBy = userName;
+        inventoryItem.projectNumber = projectNumber;
         logInventoryChange("Checked Out", itemName, userName, projectNumber);
       } else {
         errorMessages.push(`"${itemName}" is already checked out.`);
