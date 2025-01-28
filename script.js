@@ -114,20 +114,20 @@ function updateTable() {
       statusCell.classList.add("status-checked-out");
     }
 
-    const checkedOutByCell = document.createElement("td");
-    checkedOutByCell.textContent = item.checkedOutBy || "";
-
     const projectNumberCell = document.createElement("td");
     projectNumberCell.textContent = item.projectNumber || "";
 
     const timeCheckedOutCell = document.createElement("td");
     timeCheckedOutCell.textContent = item.timeCheckedOut || "";
 
+    const checkedOutByCell = document.createElement("td");
+    initialCell.textContent = item.initial || "";
+
     row.appendChild(nameCell);
     row.appendChild(statusCell);
-    row.appendChild(checkedOutByCell);
     row.appendChild(projectNumberCell);
     row.appendChild(timeCheckedOutCell);
+    row.appendChild(initialCell);
 
     // Add the row to the appropriate category table
     if (item.category === "High Volume Pumps") {
@@ -334,9 +334,9 @@ async function checkInItems() {
     if (inventoryItem) {
       if (inventoryItem.status === "checked-out") {
         inventoryItem.status = "available";
-        inventoryItem.checkedOutBy = "";
         inventoryItem.projectNumber = "";
         inventoryItem.timeCheckedOut = "";
+        inventoryItem.initial = "";
         logInventoryChange("Checked In", itemName, userName, projectNumber);
       } else {
         errorMessages.push(`"${itemName}" is already checked in.`);
@@ -371,7 +371,6 @@ async function checkOutItems() {
     if (inventoryItem) {
       if (inventoryItem.status === "available") {
         inventoryItem.status = "checked-out";
-        inventoryItem.checkedOutBy = userName;
         inventoryItem.projectNumber = projectNumber;
 
         const now = new Date();
@@ -382,6 +381,7 @@ async function checkOutItems() {
         const minutes = String(now.getMinutes()).padStart(2, '0');
         inventoryItem.timeCheckedOut = `${day}${month}${year} ${hours}${minutes}`;
 
+        inventoryItem.initial = userName;
         logInventoryChange("Checked Out", itemName, userName, projectNumber);
       } else {
         errorMessages.push(`"${itemName}" is already checked out.`);
