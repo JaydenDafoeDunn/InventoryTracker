@@ -4,14 +4,15 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(() => {
       setupTabs();
       setupForms();
+      showTab("checkio");
       updateTable();
       updateCategoryDropdown();
-      showTab("checkio");
     })
     .catch((error) => {
       console.error("Error loading inventory:", error);
       setupTabs();
       setupForms();
+      showTab("checkio");
     });
 });
 
