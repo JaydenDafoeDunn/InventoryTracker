@@ -120,10 +120,14 @@ function updateTable() {
     const projectNumberCell = document.createElement("td");
     projectNumberCell.textContent = item.projectNumber || "";
 
+    const timeCheckedOutCell = document.createElement("td");
+    timeCheckedOutCell.textContent = item.timeCheckedOut || "";
+
     row.appendChild(nameCell);
     row.appendChild(statusCell);
     row.appendChild(checkedOutByCell);
     row.appendChild(projectNumberCell);
+    row.appendChild(timeCheckedOutCell);
 
     // Add the row to the appropriate category table
     if (item.category === "High Volume Pumps") {
@@ -332,6 +336,7 @@ async function checkInItems() {
         inventoryItem.status = "available";
         inventoryItem.checkedOutBy = "";
         inventoryItem.projectNumber = "";
+        inventoryItem.timeCheckedOut = "";
         logInventoryChange("Checked In", itemName, userName, projectNumber);
       } else {
         errorMessages.push(`"${itemName}" is already checked in.`);
@@ -368,6 +373,15 @@ async function checkOutItems() {
         inventoryItem.status = "checked-out";
         inventoryItem.checkedOutBy = userName;
         inventoryItem.projectNumber = projectNumber;
+
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = String(now.getFullYear()).slice(-2);
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        inventoryItem.timeCheckedOut = `${day}${month}${year} ${hours}${minutes}`;
+
         logInventoryChange("Checked Out", itemName, userName, projectNumber);
       } else {
         errorMessages.push(`"${itemName}" is already checked out.`);
