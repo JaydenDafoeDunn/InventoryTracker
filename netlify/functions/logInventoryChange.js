@@ -17,6 +17,7 @@ exports.handler = async function(event, context) {
   try {
     // Fetch existing logs
     const fetchResponse = await fetch(`${JSONBIN_API_URL}/${BIN_ID}/latest`, {
+      console.log('FetchResponse Status:', fetchResponse.status);
       headers: {
         'X-Master-Key': SECRET_KEY,
       },
